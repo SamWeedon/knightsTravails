@@ -4,7 +4,25 @@ function knightMoves(start, end) {
 }
 
 const squareNode = function (row, column) {
-  return { square: [row, column], adjacencies: [] };
+  const populateAdjacencies = function (board) {
+    let adjacencyList = [
+      [row + 1, column + 2],
+      [row + 2, column + 1],
+      [row - 1, column + 2],
+      [row - 2, column + 1],
+      [row - 2, column - 1],
+      [row - 1, column - 2],
+      [row + 1, column - 2],
+      [row + 2, column - 1],
+    ];
+    for (let adjacency of adjacencyList) {
+      if (!board.includes(adjacency)) {
+        adjacencyList.splice(adjacencyList.indexOf(adjacency), 1);
+      }
+    }
+    return adjacencyList;
+  };
+  return { square: [row, column], adjacencies: [], populateAdjacencies };
 };
 
 const Board = function () {
@@ -24,4 +42,8 @@ const Board = function () {
 const board1 = Board();
 for (let node of board1.boardArray) {
   console.log(node.square);
+  node.adjacencies = node.populateAdjacencies(board1.boardArray);
+  for (let adjacency of node.adjacencies) {
+    console.log(adjacency);
+  }
 }
