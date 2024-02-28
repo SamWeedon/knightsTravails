@@ -4,7 +4,7 @@ function knightMoves(start, end) {
 }
 
 const squareNode = function (row, column) {
-  const populateAdjacencies = function (board) {
+  const populateAdjacencies = function () {
     let adjacencyList = [
       [row + 1, column + 2],
       [row + 2, column + 1],
@@ -15,11 +15,17 @@ const squareNode = function (row, column) {
       [row + 1, column - 2],
       [row + 2, column - 1],
     ];
-    for (let adjacency of adjacencyList) {
-      if (!board.includes(adjacency)) {
-        adjacencyList.splice(adjacencyList.indexOf(adjacency), 1);
+
+    adjacencyList = adjacencyList.filter((adjacency) => {
+      if (
+        adjacency[0] > -1 &&
+        adjacency[0] < 8 &&
+        adjacency[1] > -1 &&
+        adjacency[1] < 8
+      ) {
+        return adjacency;
       }
-    }
+    });
     return adjacencyList;
   };
   return { square: [row, column], adjacencies: [], populateAdjacencies };
@@ -42,7 +48,7 @@ const Board = function () {
 const board1 = Board();
 for (let node of board1.boardArray) {
   console.log(node.square);
-  node.adjacencies = node.populateAdjacencies(board1.boardArray);
+  node.adjacencies = node.populateAdjacencies();
   for (let adjacency of node.adjacencies) {
     console.log(adjacency);
   }
