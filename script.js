@@ -28,7 +28,12 @@ const squareNode = function (row, column) {
     });
     return adjacencyList;
   };
-  return { square: [row, column], adjacencies: [], populateAdjacencies };
+  return {
+    square: [row, column],
+    adjacencies: [],
+    visited: false,
+    populateAdjacencies,
+  };
 };
 
 const Board = function () {
@@ -41,15 +46,60 @@ const Board = function () {
     }
     return boardArray;
   };
-  return { boardArray: buildBoard() };
+  const getNode = function (coordinates) {
+    for (let node of this.boardArray) {
+      if (node.square === coordinates) {
+        return node;
+      }
+    }
+  };
+  return { boardArray: buildBoard(), getNode };
 };
 
 // driver script
 const board1 = Board();
 for (let node of board1.boardArray) {
-  console.log(node.square);
+  //console.log(node.square);
   node.adjacencies = node.populateAdjacencies();
   for (let adjacency of node.adjacencies) {
-    console.log(adjacency);
+    //console.log(adjacency);
   }
 }
+
+const getNode = function (coordinates) {
+  for (let node of board1.boardArray) {
+    if (JSON.stringify(node.square) === JSON.stringify(coordinates)) {
+      return node;
+    }
+  }
+};
+
+function levelOrder(start) {
+  let startNode = getNode(start);
+  let queue = [];
+  let results = [];
+  queue.push(startNode);
+  startNode.visited = true;
+  while (queue[0]) {
+    let currentNode = queue[0];
+    results.push(queue.shift().square);
+    if (currentNode.adjacencies) {
+      for (let adjacency of currentNode.adjacencies) {
+        if (getNode(adjacency).visited === false) {
+          queue.push(getNode(adjacency));
+          getNode(adjacency).visited = true;
+        }
+      }
+    }
+  }
+  return results;
+}
+
+//console.log(getNode([0, 0]));
+
+for (let item of levelOrder([0, 0])) {
+  console.log(item);
+}
+
+//console.log(board1.boardArray.length);
+//console.log(levelOrder([0, 0]).length);
