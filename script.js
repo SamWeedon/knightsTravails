@@ -1,8 +1,3 @@
-function knightMoves(start, end) {
-  let squares = [];
-  return squares;
-}
-
 const squareNode = function (row, column) {
   const populateAdjacencies = function () {
     let adjacencyList = [
@@ -74,6 +69,12 @@ const getNode = function (coordinates) {
   }
 };
 
+const removeAllVisitedStatus = function () {
+  for (let node of board1.boardArray) {
+    node.visited = false;
+  }
+};
+
 function levelOrder(start) {
   let startNode = getNode(start);
   let queue = [];
@@ -92,14 +93,29 @@ function levelOrder(start) {
       }
     }
   }
+  removeAllVisitedStatus();
   return results;
 }
 
+// I know that I am only one move away from finishing when the current node and end node
+// share an adjacency.
+// I can take my level order array and iterate until a node shares an adjacency with my end node.
+// Then, I can take that adjacency and find an adjacency to that adjacency that has a lower index. Then
+// I can repeat the process until I reach the start node. This works because I know that any adjacency
+// with a lower index than the current node must be "closer" to the start node, due to the fact that
+// the array is in level-order
+function knightMoves(start, end) {
+  let startNode = getNode(start);
+  let endNode = getNode(end);
+  let levelOrderArray = levelOrder(start);
+}
+
+//console.log(knightMoves([0, 0], [7, 7]));
 //console.log(getNode([0, 0]));
 
 for (let item of levelOrder([0, 0])) {
   console.log(item);
 }
 
-//console.log(board1.boardArray.length);
-//console.log(levelOrder([0, 0]).length);
+console.log(board1.boardArray.length);
+console.log(levelOrder([0, 0]).length);
