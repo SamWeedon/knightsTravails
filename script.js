@@ -77,7 +77,7 @@ const Board = function () {
 
   const levelOrder = function (start) {
     // return a level-order array when given the start node of a graph represented by adjacency lists
-    let startNode = getNode(start);
+    const startNode = getNode(start);
     let queue = [];
     let results = [];
     queue.push(startNode);
@@ -108,15 +108,15 @@ const Board = function () {
     }
   };
 
-  function knightMoves(start, end) {
+  const knightMoves = function (start, end) {
     // I can take my level order array and iterate until I reach the end node, saving its index.
     // Then, I can take that node and find an adjacency to that node that has a lower index.
     // I can repeat the process until I reach the start node. This works because I know that any adjacency
     // with a lower index than the current node must be "closer" to the start node, due to the fact that
     // the array is in level-order
     let pathArray = [end];
-    let endNode = getNode(end);
-    let levelOrderArray = levelOrder(start);
+    const endNode = getNode(end);
+    const levelOrderArray = levelOrder(start);
     let endIndex;
 
     // Find the index of the end node in the level-order array
@@ -134,7 +134,7 @@ const Board = function () {
       pathArray.unshift(levelOrderArray[endIndex].square);
     }
     return pathArray;
-  }
+  };
 
   return {
     knightMoves,
