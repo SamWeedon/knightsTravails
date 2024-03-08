@@ -75,91 +75,75 @@ const Board = function () {
     }
   };
 
-  return { boardArray, getNode, removeAllVisitedStatus };
+  const levelOrder = function (start) {
+    // return a level-order array when given the start node of a graph represented by adjacency lists
+    let startNode = getNode(start);
+    let queue = [];
+    let results = [];
+    queue.push(startNode);
+    startNode.visited = true;
+    while (queue[0]) {
+      let currentNode = queue[0];
+      results.push(queue.shift());
+      if (currentNode.adjacencies) {
+        for (let adjacency of currentNode.adjacencies) {
+          if (getNode(adjacency).visited === false) {
+            queue.push(getNode(adjacency));
+            getNode(adjacency).visited = true;
+          }
+        }
+      }
+    }
+    removeAllVisitedStatus();
+    return results;
+  };
+
+  const findLowerIndexAdjacency = function (levelOrderArray, endIndex) {
+    // returns the index of a lower-index-adjacency (in the context of a level-order representation
+    // of the graph)
+    for (let adjacency of levelOrderArray[endIndex].adjacencies) {
+      if (levelOrderArray.indexOf(getNode(adjacency)) < endIndex) {
+        return levelOrderArray.indexOf(getNode(adjacency));
+      }
+    }
+  };
+
+  function knightMoves(start, end) {
+    // I can take my level order array and iterate until I reach the end node, saving its index.
+    // Then, I can take that node and find an adjacency to that node that has a lower index.
+    // I can repeat the process until I reach the start node. This works because I know that any adjacency
+    // with a lower index than the current node must be "closer" to the start node, due to the fact that
+    // the array is in level-order
+    let pathArray = [end];
+    let endNode = getNode(end);
+    let levelOrderArray = levelOrder(start);
+    let endIndex;
+
+    // Find the index of the end node in the level-order array
+    for (let i = 0; i < levelOrderArray.length; i++) {
+      if (levelOrderArray[i] === endNode) {
+        endIndex = i;
+        break;
+      }
+    }
+
+    // find the index of a lower-index-adjacency and add that coordinate to the start of the path,
+    // until the start coordinate is reached
+    while (endIndex !== 0) {
+      endIndex = findLowerIndexAdjacency(levelOrderArray, endIndex);
+      pathArray.unshift(levelOrderArray[endIndex].square);
+    }
+    return pathArray;
+  }
+
+  return {
+    knightMoves,
+  };
 };
 
 // driver script
 const board1 = Board();
 
-const getNode = function (coordinates) {
-  // returns a node given its coordinates eg. [0, 3]
-  for (let node of board1.boardArray) {
-    if (JSON.stringify(node.square) === JSON.stringify(coordinates)) {
-      return node;
-    }
-  }
-};
-
-const removeAllVisitedStatus = function () {
-  // sets "visited" property to false for all nodes
-  for (let node of board1.boardArray) {
-    node.visited = false;
-  }
-};
-
-function levelOrder(start) {
-  // return a level-order array when given the start node of a graph represented by adjacency lists
-  let startNode = getNode(start);
-  let queue = [];
-  let results = [];
-  queue.push(startNode);
-  startNode.visited = true;
-  while (queue[0]) {
-    let currentNode = queue[0];
-    results.push(queue.shift());
-    if (currentNode.adjacencies) {
-      for (let adjacency of currentNode.adjacencies) {
-        if (getNode(adjacency).visited === false) {
-          queue.push(getNode(adjacency));
-          getNode(adjacency).visited = true;
-        }
-      }
-    }
-  }
-  removeAllVisitedStatus();
-  return results;
-}
-
-const findLowerIndexAdjacency = function (levelOrderArray, endIndex) {
-  // returns the index of a lower-index-adjacency (in the context of a level-order representation
-  // of the graph)
-  for (let adjacency of levelOrderArray[endIndex].adjacencies) {
-    if (levelOrderArray.indexOf(getNode(adjacency)) < endIndex) {
-      return levelOrderArray.indexOf(getNode(adjacency));
-    }
-  }
-};
-
-function knightMoves(start, end) {
-  // I can take my level order array and iterate until I reach the end node, saving its index.
-  // Then, I can take that node and find an adjacency to that node that has a lower index.
-  // I can repeat the process until I reach the start node. This works because I know that any adjacency
-  // with a lower index than the current node must be "closer" to the start node, due to the fact that
-  // the array is in level-order
-  let pathArray = [end];
-  let endNode = getNode(end);
-  let levelOrderArray = levelOrder(start);
-  let endIndex;
-
-  // Find the index of the end node in the level-order array
-  for (let i = 0; i < levelOrderArray.length; i++) {
-    if (levelOrderArray[i] === endNode) {
-      endIndex = i;
-      break;
-    }
-  }
-
-  // find the index of a lower-index-adjacency and add that coordinate to the start of the path,
-  // until the start coordinate is reached
-  while (endIndex !== 0) {
-    endIndex = findLowerIndexAdjacency(levelOrderArray, endIndex);
-    pathArray.unshift(levelOrderArray[endIndex].square);
-  }
-  return pathArray;
-}
-
-for (let item of knightMoves([0, 0], [7, 7])) {
+for (let item of board1.knightMoves([0, 0], [7, 7])) {
   console.log(item);
 }
-
-console.log(board1.getNode([0, 0]));
